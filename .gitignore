@@ -2,4 +2,11 @@
 *.elf
 *.o
 *.d
+*.backup
+rom.h
+rom.s
+font.h
+font.c
+guibg.c
+guibg.h
 build/
