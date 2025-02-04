@@ -1,6 +1,6 @@
 ## GBA Flash Tools
 
-This program can take a GBA ROM, and flash it to one of those cheap bootleg GBA carts you can find everywhere on AliExpress. Right now, the 8MB (Link to the Past) and 16MB (Minish Cap/Pokemon) cartridges are supported. 32MB carts will probably come after I get my hands on one.
+This program can take a GBA ROM, and flash it to one of those cheap bootleg GBA carts you can find everywhere on AliExpress. Right now, the 16MB (Minish Cap/Pokemon) cartridges are supported. 32MB carts will probably come after I get my hands on one.
 
 To build the flashing client, just run this from the project root:  
 
