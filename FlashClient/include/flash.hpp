@@ -7,6 +7,7 @@
 // #include <gba_systemcalls.h>
 
 bool QueryCFI();
+uint16_t DetectChipType();
 uint8_t readByte(int addr);
 void EraseSector(uint32_t address);
 uint32_t GetRegionSectorSize(uint32_t region);

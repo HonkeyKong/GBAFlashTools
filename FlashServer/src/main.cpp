@@ -13,11 +13,8 @@ uint32_t successCount = 0;
 uint32_t mismatchCount = 0;
 
 int main() {
-    // irqInit();
-    // irqEnable(IRQ_VBLANK);
     InitText();
     SetupBackground();
-    // ClearText();
     RenderLine("Initializing link...", 2);
 
     linkSPI = new LinkSPI();
@@ -74,8 +71,8 @@ int main() {
                 RenderLine("Checksum fail, retrying.", 5);
                 RenderLine("Calc: ", 6);
                 RenderLine("Recv: ", 7);
-                RenderText(HexString32(checksum), 6, 8);
-                RenderText(HexString32(ack), 6, 9);
+                RenderText(HexString32(checksum), 9, 8);
+                RenderText(HexString32(ack), 9, 9);
                 bytesSent -= blockSize;
                 chunkBytesSent -= blockSize;
                 continue;
@@ -83,8 +80,8 @@ int main() {
 
             successCount++;
             RenderLine("Block sent successfully!", 10);
-            RenderLine("Bytes Sent:", 11);
-            RenderText(HexString32(bytesSent), 12, 11);
+            RenderLine("Sent: ", 11);
+            RenderText(HexString32(bytesSent), 8, 11);
         }
 
         RenderLine("Waiting for flash ACK...", 12);
@@ -101,12 +98,12 @@ int main() {
 
     ClearText();
     RenderLine("Transfer complete!", 8);
-    RenderLine("Total Bytes Sent:", 9);
-    RenderText(HexString32(bytesSent), 16, 9);
-    RenderLine("Successes:", 10);
-    RenderText(HexString32(successCount), 12, 10);
+    RenderLine("Total Sent: ", 9);
+    RenderText(HexString32(bytesSent), 15, 9);
+    RenderLine("Successes: ", 10);
+    RenderText(HexString32(successCount), 15, 10);
     RenderLine("Mismatches:", 11);
-    RenderText(HexString32(mismatchCount), 14, 11);
+    RenderText(HexString32(mismatchCount), 15, 11);
 
     while (true);
     return 0;

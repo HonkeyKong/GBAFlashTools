@@ -33,19 +33,14 @@ bool QueryCFI() {
     } else if (Q == 'R' && R == 'Q' && Y == 'Z') {
         bitSwapped = true;
     } else {
-        // RenderLine("CFI QUERY FAILED!", currentLine++);
         return false;
     }
 
     // Detect sector layout
     uint8_t regionCount = readByte(0x58); // Adjust for D0/D1 swap automatically
-    // RENDER_LINE_WITH_VALUE("REGIONS: ", regionCount);
-    // RenderLine("REGIONS: ", currentLine);
-    // RenderText(HexString(regionCount), 9, currentLine++);
 
     for (uint8_t region = 0; region < regionCount; ++region) {
         uint32_t baseOffset = 0x5A + region * 8;
-        // uint32_t baseOffset = 0x5A + region << 3;
         uint16_t sectorCount = readByte(baseOffset) | (readByte(baseOffset + 2) << 8);
         uint16_t sectorSize = readByte(baseOffset + 4) | (readByte(baseOffset + 6) << 8);
 
@@ -56,35 +51,31 @@ bool QueryCFI() {
             region1Sectors = sectorCount + 1;
             region1Size = sectorSize * 256; // Larger sectors for region 1
         }
-
-        // RENDER_LINE_WITH_VALUE("REGION ", region);
-        // RenderLine("REGION ", currentLine);
-        // RenderText(HexString(region), 7, currentLine++);
-        // RenderText(HexString(region0Sectors), 0, currentLine);
-        // RenderText("X" , 3, currentLine);
-        // RenderText(HexString(region0Size), 5, currentLine++);
     }
 
     _FLASH_WRITE(0x0000, 0xF0); // Exit CFI mode
     return true;
 }
 
+uint16_t mfrID = 0;
+uint16_t devID = 0;
+
 uint16_t DetectChipType() {
-    _FLASH_WRITE(0xAAA, 0xA9); // Enter auto-select mode
-    _FLASH_WRITE(0x555, 0x56);
-    _FLASH_WRITE(0xAAA, 0x90);
+    if (!QueryCFI()) {
+        // RenderLine("CFI Query Failed!", 2);
+        return 0; // Failed to query the chip
+    }
 
-    uint16_t manufacturerID = *(volatile uint16_t*)(FLASH_BASE + 0x00);
-    uint16_t deviceID = *(volatile uint16_t*)(FLASH_BASE + 0x02);
-
-    _FLASH_WRITE(0x0000, 0xF0); // Exit auto-select mode
-
-    if (manufacturerID == 0x01 && deviceID == 0x227E) {
-        return 16; // S29GL128N (16MB)
-    } else if (manufacturerID == 0x01 && deviceID == 0x2200) {
-        return 8; // S29GL064N (8MB)
-    } else {
-        return 0; // Unknown chip
+    // Use the queried sector layout info
+    if (region0Sectors == 8 && region0Size == 8192 && region1Sectors == 127 && region1Size == 65536) {
+        return 8;  // Detected S29GL064N (8MB)
+    } 
+    else if (region0Sectors > 8 && region0Size >= 128 * 1024) {
+        return 16; // Detected S29GL128N (16MB)
+    } 
+    else {
+        // RenderLine("Unknown chip layout!", 3);
+        return 0;  // Unknown chip
     }
 }
 
